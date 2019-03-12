@@ -225,29 +225,33 @@ func (c *EC2ClusterPKE) Persist(string, string) error {
 }
 
 func (c *EC2ClusterPKE) UpdateStatus(status, statusMessage string) error {
-	originalStatus := c.model.Cluster.Status
-	originalStatusMessage := c.model.Cluster.StatusMessage
-
-	err := c.db.Model(&c.model.Cluster).Updates(map[string]interface{}{"status": status, "status_message": statusMessage}).Error
-	if err != nil {
-		return errors.Wrap(err, "failed to update status")
+	if c.model.Cluster.Status == status && c.model.Cluster.StatusMessage == statusMessage {
+		return nil
 	}
 
-	if originalStatus != status {
-		statusHistory := &cluster.StatusHistoryModel{
+	if c.model.Cluster.ID != 0 {
+		// Record status change to history before modifying the actual status.
+		// If setting/saving the actual status doesn't succeed somehow, at least we can reconstruct it from history (i.e. event sourcing).
+		statusHistory := cluster.StatusHistoryModel{
 			ClusterID:   c.model.Cluster.ID,
 			ClusterName: c.model.Cluster.Name,
 
-			FromStatus:        originalStatus,
-			FromStatusMessage: originalStatusMessage,
+			FromStatus:        c.model.Cluster.Status,
+			FromStatusMessage: c.model.Cluster.StatusMessage,
 			ToStatus:          status,
 			ToStatusMessage:   statusMessage,
 		}
 
-		err := c.db.Save(&statusHistory).Error
-		if err != nil {
-			return errors.Wrap(err, "failed to update cluster status history")
+		if err := c.db.Save(&statusHistory).Error; err != nil {
+			return errors.Wrap(err, "failed to record cluster status change to history")
 		}
+	}
+
+	c.model.Cluster.Status = status
+	c.model.Cluster.StatusMessage = statusMessage
+
+	if err := c.db.Save(&c.model.Cluster).Error; err != nil {
+		return errors.Wrap(err, "failed to update cluster status")
 	}
 
 	return nil
