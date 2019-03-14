@@ -391,10 +391,10 @@ func (a *SecretsApiService) AllowedSecretsTypes(ctx context.Context) (map[string
 SecretsApiService List required keys
 List required keys in the given secret type
  * @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- * @param type_ Secret type
+ * @param secretType Secret type
 @return AllowedSecretTypeResponse
 */
-func (a *SecretsApiService) AllowedSecretsTypesKeys(ctx context.Context, type_ string) (AllowedSecretTypeResponse, *http.Response, error) {
+func (a *SecretsApiService) AllowedSecretsTypesKeys(ctx context.Context, secretType string) (AllowedSecretTypeResponse, *http.Response, error) {
 	var (
 		localVarHttpMethod   = strings.ToUpper("Get")
 		localVarPostBody     interface{}
@@ -405,8 +405,8 @@ func (a *SecretsApiService) AllowedSecretsTypesKeys(ctx context.Context, type_ s
 	)
 
 	// create path and map variables
-	localVarPath := a.client.cfg.BasePath + "/api/v1/allowed/secrets/{type}"
-	localVarPath = strings.Replace(localVarPath, "{"+"type"+"}", fmt.Sprintf("%v", type_), -1)
+	localVarPath := a.client.cfg.BasePath + "/api/v1/allowed/secrets/{secretType}"
+	localVarPath = strings.Replace(localVarPath, "{"+"secretType"+"}", fmt.Sprintf("%v", secretType), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}

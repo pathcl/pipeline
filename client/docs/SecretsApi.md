@@ -7,7 +7,7 @@ Method | HTTP request | Description
 [**AddSecretTag**](SecretsApi.md#AddSecretTag) | **Put** /api/v1/orgs/{orgId}/secrets/{secretId}/tags/{tag} | Add a tag to a secret
 [**AddSecrets**](SecretsApi.md#AddSecrets) | **Post** /api/v1/orgs/{orgId}/secrets | Add secrets
 [**AllowedSecretsTypes**](SecretsApi.md#AllowedSecretsTypes) | **Get** /api/v1/allowed/secrets | List allowed secret types
-[**AllowedSecretsTypesKeys**](SecretsApi.md#AllowedSecretsTypesKeys) | **Get** /api/v1/allowed/secrets/{type} | List required keys
+[**AllowedSecretsTypesKeys**](SecretsApi.md#AllowedSecretsTypesKeys) | **Get** /api/v1/allowed/secrets/{secretType} | List required keys
 [**DeleteSecretTag**](SecretsApi.md#DeleteSecretTag) | **Delete** /api/v1/orgs/{orgId}/secrets/{secretId}/tags/{tag} | Delete a tag from a secret
 [**DeleteSecrets**](SecretsApi.md#DeleteSecrets) | **Delete** /api/v1/orgs/{orgId}/secrets/{secretId} | Delete secrets
 [**GetSecret**](SecretsApi.md#GetSecret) | **Get** /api/v1/orgs/{orgId}/secrets/{secretId} | Get secret
@@ -111,7 +111,7 @@ This endpoint does not need any parameter.
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **AllowedSecretsTypesKeys**
-> AllowedSecretTypeResponse AllowedSecretsTypesKeys(ctx, type_)
+> AllowedSecretTypeResponse AllowedSecretsTypesKeys(ctx, secretType)
 List required keys
 
 List required keys in the given secret type
@@ -121,7 +121,7 @@ List required keys in the given secret type
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
  **ctx** | **context.Context** | context for authentication, logging, cancellation, deadlines, tracing, etc.
-  **type_** | **string**| Secret type | 
+  **secretType** | **string**| Secret type | 
 
 ### Return type
 

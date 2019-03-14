@@ -19,14 +19,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/goph/emperror"
-	"github.com/jinzhu/gorm"
 	"github.com/sirupsen/logrus"
 
 	"github.com/banzaicloud/pipeline/api/ark/common"
-	"github.com/banzaicloud/pipeline/auth"
-	"github.com/banzaicloud/pipeline/cluster"
 	"github.com/banzaicloud/pipeline/internal/ark"
-	arkClusterManager "github.com/banzaicloud/pipeline/internal/ark/clustermanager"
 	"github.com/banzaicloud/pipeline/internal/ark/sync"
 	"github.com/banzaicloud/pipeline/internal/platform/gin/correlationid"
 )
@@ -46,21 +42,11 @@ func Sync(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
-func syncOrgBackups(clusterManager *cluster.Manager, org *auth.Organization, db *gorm.DB, logger logrus.FieldLogger) error {
-	backupSyncSvc := sync.NewBackupsSyncService(org, db, logger)
-	err := backupSyncSvc.SyncBackups(arkClusterManager.New(clusterManager))
-	if err != nil {
-		return emperror.Wrap(err, "could not sync org backups")
-	}
-
-	return nil
-}
-
 func syncBackups(arkSvc *ark.Service, logger logrus.FieldLogger) error {
 	backupSyncSvc := sync.NewBackupsSyncService(arkSvc.GetOrganization(), arkSvc.GetDB(), logger)
 	err := backupSyncSvc.SyncBackupsForCluster(arkSvc.GetCluster())
 	if err != nil {
-		return emperror.Wrap(err, "could not sync backups")
+		return emperror.WrapWith(err, "could not sync backups", "clusterName", arkSvc.GetCluster().GetName())
 	}
 
 	return nil
